@@ -2,15 +2,23 @@ package com.mortenjust.wifirobot;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.awt.font.TextAttribute;
+
 public class MainActivity extends Activity {
+
+    String TAG = "mj.mainactivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+       // Log.d(TAG, "starting service with geofence");
+        //WifiActionService.startGeofence(getApplicationContext(), 100);
     }
 
     @Override

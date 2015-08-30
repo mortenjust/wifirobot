@@ -15,7 +15,7 @@ public class WifiBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         //
       //  Log.d(TAG, "Wifi state changed, dumping intent");
-      //  LogUtil.dumpIntent(intent);
+      //  Util.dumpIntent(intent);
 
         int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
         int previousState = intent.getIntExtra(WifiManager.EXTRA_PREVIOUS_WIFI_STATE, 0);
