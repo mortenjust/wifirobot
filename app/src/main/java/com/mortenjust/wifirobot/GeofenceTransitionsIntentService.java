@@ -30,18 +30,9 @@ public class GeofenceTransitionsIntentService extends IntentService {
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-            // since we dont care which fence and probably wont' have more than one, we'll just go ahead and enable wifi now
-            Log.d(TAG, "Ready to enable wifi!");
-            enableWifi();
-            // enable wifi
-            Log.d(TAG, "Now remove geofence");
-            // remove geofence
+            // the service takes care of starting wifi again
+            WifiActionService.stopGeofences(getApplicationContext());
         }
     }
 
-    public void enableWifi(){
-        WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
-        wifiManager.setWifiEnabled(true);
-        Util.issueNotification(getApplicationContext(), R.drawable.abc_btn_check_material, "Wifi enabled", "Sincerely, the robot", Util.getMainActivityPendingIntent(getApplicationContext()) );
-    }
 }

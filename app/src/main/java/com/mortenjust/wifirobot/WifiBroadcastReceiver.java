@@ -27,8 +27,8 @@ public class WifiBroadcastReceiver extends BroadcastReceiver {
                 Log.d(TAG, "disabling");
                 break;
             case WifiManager.WIFI_STATE_DISABLED:
-                Log.d(TAG, "disabled, over to you geofence service");
-                WifiActionService.startGeofence(context, 100);
+                Log.d(TAG, "wifi is disabled, over to you geofence service");
+                WifiActionService.startGeofence(context, 50);
                 break;
             case WifiManager.WIFI_STATE_ENABLED:
                 Log.d(TAG, "enabled");
@@ -37,6 +37,7 @@ public class WifiBroadcastReceiver extends BroadcastReceiver {
                 Log.d(TAG, "enabling");
                 break;
         }
+
 
 
 

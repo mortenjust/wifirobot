@@ -3,4 +3,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="preference_file_name">com.mortenjust.wifirobot.prefs</string>
+
 </resources>

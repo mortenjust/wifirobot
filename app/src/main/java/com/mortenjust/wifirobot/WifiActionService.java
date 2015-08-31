@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.location.Location;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.service.carrier.CarrierMessagingService;
@@ -28,6 +29,7 @@ public class WifiActionService extends IntentService
     private static final String ACTION_START_FENCE = "com.mortenjust.wifirobot.action.START_FENCE";
     private static final String ACTION_STOP_FENCES = "com.mortenjust.wifirobot.action.STOP_FENCES";
     private static final String EXTRA_FENCE_WIDTH = "com.mortenjust.wifirobot.extra.FENCE_WIDTH";
+    private static final String PREF_ISSUE_NOTIFICATIONS = "com.mortenjust.wifirobot.pref.ISSUE_NOTIFICATIONS";
     String TAG = "mj.wifiservice";
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
@@ -35,6 +37,23 @@ public class WifiActionService extends IntentService
     PendingIntent mGeofencePendingIntent;
     ArrayList<Geofence> mGeofenceList = new ArrayList<Geofence>();
     String mCurrentAction;
+
+
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        if (intent != null) {
+            final String action = intent.getAction();
+            if (ACTION_START_FENCE.equals(action)) {
+                final int fenceWidth = intent.getIntExtra(EXTRA_FENCE_WIDTH, 0);
+                handleStartFence(fenceWidth);
+            }
+            if (ACTION_STOP_FENCES.equals(action)) {
+                handleStopFences();
+            }
+        }
+    }
+
 
 
     @Override
@@ -55,6 +74,8 @@ public class WifiActionService extends IntentService
         intent.setAction(ACTION_STOP_FENCES);
         context.startService(intent);
     }
+
+
 
     public static void startGeofence(Context context, int fenceWidth) {
         Intent intent = new Intent(context, WifiActionService.class);
@@ -102,14 +123,18 @@ public class WifiActionService extends IntentService
             if(mCurrentAction == ACTION_STOP_FENCES){
                 tearDownFences();
             }
+
+
         }
     }
 
     private void tearDownFences(){
+
         LocationServices.GeofencingApi.removeGeofences(
                 mGoogleApiClient,
                 getGeofencePendingIntent()
         ).setResultCallback(this);
+
     }
 
     private GeofencingRequest getGeofencingRequest() {
@@ -151,19 +176,6 @@ public class WifiActionService extends IntentService
                 FLAG_UPDATE_CURRENT);
     }
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        if (intent != null) {
-            final String action = intent.getAction();
-            if (ACTION_START_FENCE.equals(action)) {
-                final int fenceWidth = intent.getIntExtra(EXTRA_FENCE_WIDTH, 0);
-                handleStartFence(fenceWidth);
-            }
-            if (ACTION_STOP_FENCES.equals(action)) {
-                handleStopFences();
-            }
-        }
-    }
 
     protected synchronized void buildGoogleApiClient() {
         Log.d(TAG, "building google api client");
@@ -192,13 +204,95 @@ public class WifiActionService extends IntentService
         mCurrentAction = ACTION_START_FENCE;
         mFenceWidth = fenceWidth;
         Log.d(TAG, "ready to set up the fence with a width of " + fenceWidth);
+        Boolean doSendNotification = false;
+        // only show notification the first few times or if the user has enabled it
+        if(Util.getPrefInt(getApplicationContext(), "stoppedCount") <= 3){ doSendNotification = true; }
 
-        Util.issueNotification(getApplicationContext(), R.drawable.abc_btn_check_material, "Wifi disabled", "Will be enabled again when you move 100 meters", Util.getMainActivityPendingIntent(getApplicationContext()));
+        if(!userWantsNotifications()){
+            doSendNotification = false;
+        } else {
+            doSendNotification = true;
+        }
+
+        if(doSendNotification){
+            Util.issueNotification(getApplicationContext(),
+                    R.drawable.wifi_off,
+                    "Wifi disabled",
+                    "We'll turn it on when you get out of here",
+                    Util.getMainActivityPendingIntent(getApplicationContext()));
+        }
+    }
+
+    public void enableWifi(){
+        WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
+        int enabledCount = Util.getPrefInt(getApplicationContext(), "enabledCount");
+        enabledCount++;
+        Util.writePrefInt(getApplicationContext(), "enabledCount", enabledCount);
+        Log.d(TAG, "enablecount: " + enabledCount);
+    }
+
+
+    public boolean userWantsNotifications(){
+        Log.d(TAG, "I was asked what prefs says. It says "+Util.getPrefBoolean(getApplicationContext(), PREF_ISSUE_NOTIFICATIONS));
+        return Util.getPrefBoolean(getApplicationContext(), PREF_ISSUE_NOTIFICATIONS);
     }
 
     private void handleStopFences(){
         mCurrentAction = ACTION_STOP_FENCES;
+        enableWifi();
+        int stoppedCount = Util.getPrefInt(getApplicationContext(), "stoppedCount");
+        stoppedCount++;
 
+        Util.writePrefInt(getApplicationContext(), "stoppedCount", stoppedCount);
+        Log.d(TAG, "stoppedcount: " + stoppedCount);
+
+        String contentText;
+
+        switch (stoppedCount){
+            case 1:
+                contentText = "It worked! You'll get a notification the next few times the app automatically turns on your wifi";
+                break;
+            case 2:
+                contentText = "It worked again! Pretty smooth.";
+                break;
+            case 3:
+                contentText = "It just works. You can turn off these notifications from this notification";
+                break;
+            case 4:
+                contentText = "Boom. Flippin' switches like the mother of robots";
+                break;
+            case 5:
+                contentText = "Love. Ro. Bot.";
+                break;
+            case 6:
+                contentText = "Proudly switching since 2015";
+                break;
+            case 7:
+                contentText = "It's all in HOW you switch it.";
+                break;
+            case 8:
+                contentText = "And we're back.";
+                break;
+            default:
+                contentText = "Sincerely, the Wifi Robot";
+
+        }
+
+        Boolean doSendNotification = true;
+        if (!userWantsNotifications()) {
+            doSendNotification = false;
+        } else {
+            doSendNotification = true;
+        }
+
+        if(doSendNotification){
+        Util.issueNotification(getApplicationContext(),
+                R.drawable.wifi_on,
+                "Wifi enabled",
+                contentText,
+                Util.getMainActivityPendingIntent(getApplicationContext()));
+        }
     }
 
 }
