@@ -3,6 +3,7 @@
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/robot_gradient"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
 
     <Switch
@@ -18,11 +19,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="The Wifi Robot remembers to turn on your wifi when you move away from the bad wifi that made you turn it off. "
+        android:text="Sometimes you have to turn off wi-fi. The robot remembers to turn it on again."
         android:id="@+id/textView"
         android:layout_centerHorizontal="true"
-        android:gravity="center_vertical|center_horizontal"
         android:layout_marginTop="10dp"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:textSize="32sp" />
 
 </RelativeLayout>

@@ -259,7 +259,7 @@ public class WifiActionService extends IntentService
                 contentText = "It just works. You can turn off these notifications from this notification";
                 break;
             case 4:
-                contentText = "Boom. Flippin' switches like the mother of robots";
+                contentText = "Boom. Flippin' switches";
                 break;
             case 5:
                 contentText = "Love. Ro. Bot.";
@@ -275,7 +275,6 @@ public class WifiActionService extends IntentService
                 break;
             default:
                 contentText = "Sincerely, the Wifi Robot";
-
         }
 
         Boolean doSendNotification = true;
