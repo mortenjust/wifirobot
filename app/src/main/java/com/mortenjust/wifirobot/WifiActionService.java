@@ -123,13 +123,10 @@ public class WifiActionService extends IntentService
             if(mCurrentAction == ACTION_STOP_FENCES){
                 tearDownFences();
             }
-
-
         }
     }
 
     private void tearDownFences(){
-
         LocationServices.GeofencingApi.removeGeofences(
                 mGoogleApiClient,
                 getGeofencePendingIntent()
@@ -201,12 +198,14 @@ public class WifiActionService extends IntentService
      * parameters.
      */
     private void handleStartFence(int fenceWidth) {
+        // todo: check if the user has enabled hotspot. If so, we don't even want to do any of this
+
         mCurrentAction = ACTION_START_FENCE;
         mFenceWidth = fenceWidth;
+
         Log.d(TAG, "ready to set up the fence with a width of " + fenceWidth);
+
         Boolean doSendNotification = false;
-        // only show notification the first few times or if the user has enabled it
-        if(Util.getPrefInt(getApplicationContext(), "stoppedCount") <= 3){ doSendNotification = true; }
 
         if(!userWantsNotifications()){
             doSendNotification = false;
@@ -228,7 +227,7 @@ public class WifiActionService extends IntentService
         wifiManager.setWifiEnabled(true);
         int enabledCount = Util.getPrefInt(getApplicationContext(), "enabledCount");
         enabledCount++;
-        Util.writePrefInt(getApplicationContext(), "enabledCount", enabledCount);
+        Util.writePref(getApplicationContext(), "enabledCount", enabledCount);
         Log.d(TAG, "enablecount: " + enabledCount);
     }
 
@@ -244,7 +243,7 @@ public class WifiActionService extends IntentService
         int stoppedCount = Util.getPrefInt(getApplicationContext(), "stoppedCount");
         stoppedCount++;
 
-        Util.writePrefInt(getApplicationContext(), "stoppedCount", stoppedCount);
+        Util.writePref(getApplicationContext(), "stoppedCount", stoppedCount);
         Log.d(TAG, "stoppedcount: " + stoppedCount);
 
         String contentText;

@@ -8,26 +8,21 @@
     <Switch
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Show notifications when switching"
+        android:text="Tell me what the robot does via notifications"
         android:id="@+id/wantsNotifications"
         android:checked="true"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
 
-    <ImageView
-        android:layout_width="400dp"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/hypnoBig"
-        android:src="@drawable/hypnotic_circle"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true" />
-
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/hypnoSmall"
-        android:src="@drawable/hypnotic_circle"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="The Wifi Robot remembers to turn on your wifi when you move away from the bad wifi that made you turn it off. "
+        android:id="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_centerVertical="true" />
 
 </RelativeLayout>

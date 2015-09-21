@@ -25,36 +25,10 @@ public class MainActivity extends Activity {
     private static final String PREF_ISSUE_NOTIFICATIONS = "com.mortenjust.wifirobot.pref.ISSUE_NOTIFICATIONS";
     private static final String ACTION_STOP_NOTIFICATIONS = "com.mortenjust.wifirobot.extra.STOP_NOTIFICATIONS";
     Switch wantsNotifications;
-    ImageView hypnoBig;
-    ImageView hypnoSmall;
+
 
     void setupViews(){
         wantsNotifications = (Switch) findViewById(R.id.wantsNotifications);
-        hypnoBig = (ImageView) findViewById(R.id.hypnoBig);
-        hypnoSmall = (ImageView) findViewById(R.id.hypnoSmall);
-
-        RotateAnimation r = new RotateAnimation(0.0f, -10.0f*360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        r.setRepeatMode(Animation.REVERSE|Animation.INFINITE);
-        r.setInterpolator(new LinearInterpolator());
-        hypnoBig.startAnimation(r);
-
-        ScaleAnimation s = new ScaleAnimation(1, 1, 10, 10);
-        s.setRepeatMode(Animation.REVERSE);
-        s.setInterpolator(new AccelerateDecelerateInterpolator());
-        hypnoSmall.startAnimation(s);
-
-        AlphaAnimation a = new AlphaAnimation(0.5f, 1f);
-        a.setRepeatMode(Animation.REVERSE);
-        hypnoBig.startAnimation(a);
-        hypnoSmall.startAnimation(a);
-
-        RotateAnimation r2 = new RotateAnimation(0.0f, 10.0f*360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        r.setRepeatMode(Animation.REVERSE);
-        r2.setDuration(100 * 1000);
-        r2.setInterpolator(new LinearInterpolator());
-        hypnoSmall.startAnimation(r2);
-
-
     }
 
     @Override
@@ -74,9 +48,9 @@ public class MainActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    Util.writePrefBoolean(getApplicationContext(), PREF_ISSUE_NOTIFICATIONS, true);
+                    Util.writePref(getApplicationContext(), PREF_ISSUE_NOTIFICATIONS, true);
                 } else {
-                    Util.writePrefBoolean(getApplicationContext(), PREF_ISSUE_NOTIFICATIONS, false);
+                    Util.writePref(getApplicationContext(), PREF_ISSUE_NOTIFICATIONS, false);
                 }
             }
         });
@@ -103,7 +77,7 @@ public class MainActivity extends Activity {
         if(intent.getAction().equals(ACTION_STOP_NOTIFICATIONS)){
             Log.d(TAG, "ready to turn off notifications");
             // first do it int he shared prefs
-            Util.writePrefBoolean(getApplicationContext(), PREF_ISSUE_NOTIFICATIONS, false);
+            Util.writePref(getApplicationContext(), PREF_ISSUE_NOTIFICATIONS, false);
             // then switch
             wantsNotifications.setChecked(false);
 
@@ -137,7 +111,7 @@ public class MainActivity extends Activity {
 
     private void handleStopNotifications(){
         // just put something in prefs
-        Util.writePrefBoolean(getApplicationContext(), PREF_ISSUE_NOTIFICATIONS, false);
+        Util.writePref(getApplicationContext(), PREF_ISSUE_NOTIFICATIONS, false);
 
     }
 }

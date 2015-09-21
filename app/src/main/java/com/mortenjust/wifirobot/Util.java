@@ -5,11 +5,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
@@ -48,40 +50,45 @@ public class Util {
         return PendingIntent.getActivity(c, 0, activityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    public static void writePrefString(Context context, String key, String value){
-        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_file_name), Context.MODE_PRIVATE);
-        SharedPreferences.Editor e = sharedPref.edit();
-        e.putString(key, value);
+    private static SharedPreferences getPrefs(Context c){
+        return c.getSharedPreferences(c.getString(R.string.preference_file_name), Context.MODE_PRIVATE);
     }
-
-    public static void writePrefBoolean(Context context, String key, Boolean value){
-        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_file_name), Context.MODE_PRIVATE);
-        SharedPreferences.Editor e = sharedPref.edit();
-        e.putBoolean(key, value);
-        e.commit();
+    private static SharedPreferences.Editor getPrefEditor(Context context){
+        return getPrefs(context).edit();
     }
-
-    public static void writePrefInt(Context context, String key, int value){
-        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_file_name), Context.MODE_PRIVATE);
-        SharedPreferences.Editor e = sharedPref.edit();
-        e.putInt(key, value);
-        e.commit();
+    public static void writePref(Context context, String key, String value){
+        getPrefEditor(context).putString(key, value).commit();
     }
-
+    public static void writePref(Context context, String key, int value){
+        getPrefEditor(context).putInt(key, value).commit();
+    }
+    public static void writePref(Context context, String key, boolean value){
+        getPrefEditor(context).putBoolean(key, value).commit();
+    }
     public static boolean getPrefBoolean(Context context, String key){
-        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_file_name), Context.MODE_PRIVATE);
-        return sharedPref.getBoolean(key, true);
+        return getPrefs(context).getBoolean(key, true);
     }
-
-
     public static int getPrefInt(Context context, String key){
-        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_file_name), Context.MODE_PRIVATE);
-        return sharedPref.getInt(key, 0);
+        return getPrefs(context).getInt(key, 0);
+    }
+    public static String getPrefString(Context context, String key){
+        return getPrefs(context).getString(key, "");
     }
 
-    public static String getPrefString(Context context, String key){
-        SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preference_file_name), Context.MODE_PRIVATE);
-        return sharedPref.getString(key, "");
+
+    public static boolean isSharingWiFi(final WifiManager manager)
+    {
+        try
+        {
+            final Method method = manager.getClass().getDeclaredMethod("isWifiApEnabled");
+            method.setAccessible(true); //in the case of visibility change in future APIs
+            return (Boolean) method.invoke(manager);
+        }
+        catch (final Throwable ignored)
+        {
+        }
+
+        return false;
     }
 
     public static void dumpIntent(Intent i){

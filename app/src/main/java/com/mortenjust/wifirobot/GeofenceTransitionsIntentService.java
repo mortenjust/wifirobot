@@ -11,6 +11,7 @@ import com.google.android.gms.location.GeofencingEvent;
 
 import java.util.List;
 
+// just testing
 
 public class GeofenceTransitionsIntentService extends IntentService {
     String TAG = "mj.geofenceservice";
